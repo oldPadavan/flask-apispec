@@ -18,10 +18,13 @@ CONVERTER_MAPPING = {
 DEFAULT_TYPE = ('string', None)
 
 
-def rule_to_params(rule, overrides=None):
+def rule_to_params(rule, overrides=None, *, major_api_version = 2):
     overrides = (overrides or {})
     result = [
-        argument_to_param(argument, rule, overrides.get(argument, {}))
+        argument_to_param(
+            argument, rule,
+            overrides.get(argument, {}),
+            major_api_version=major_api_version)
         for argument in rule.arguments
     ]
     for key in overrides.keys():
@@ -30,17 +33,25 @@ def rule_to_params(rule, overrides=None):
             result.append(overrides[key])
     return result
 
-def argument_to_param(argument, rule, override=None):
+
+def argument_to_param(argument, rule, override=None, *, major_api_version=2):
     param = {
         'in': 'path',
         'name': argument,
         'required': True,
     }
     type_, format_ = CONVERTER_MAPPING.get(type(rule._converters[argument]), DEFAULT_TYPE)
-    param['type'] = type_
+    schema = {}
+    schema['type'] = type_
     if format_ is not None:
-        param['format'] = format_
+        schema['format'] = format_
     if rule.defaults and argument in rule.defaults:
         param['default'] = rule.defaults[argument]
+    if major_api_version == 2:
+       param.update(schema)
+    elif major_api_version == 3:
+       param['schema'] = schema
+    else:
+       raise NotImplementedError("No support for OpenAPI / Swagger Major version {}".format(major_api_version))
     param.update(override or {})
     return param

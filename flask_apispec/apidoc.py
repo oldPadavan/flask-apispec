@@ -91,7 +91,8 @@ class Converter:
                 options['location'] = 'body'
             extra_params += openapi_converter(schema, **options) if args else []
 
-        rule_params = rule_to_params(rule, docs.get('params')) or []
+        rule_params = rule_to_params(
+            rule, docs.get('params'), major_api_version=self.spec.openapi_version.major) or []
 
         return extra_params + rule_params
 
