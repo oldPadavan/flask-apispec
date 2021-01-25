@@ -88,7 +88,9 @@ class FlaskApiSpec:
         if ui_url:
             blueprint.add_url_rule(ui_url, 'swagger-ui', self.swagger_ui)
 
-        self.app.register_blueprint(blueprint)
+        self.app.register_blueprint(
+            blueprint,
+            url_prefix=self.app.config.get('APISPEC_SWAGGER_STATIC'))
 
     def swagger_json(self):
         return flask.jsonify(self.spec.to_dict())
