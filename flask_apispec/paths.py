@@ -18,7 +18,7 @@ CONVERTER_MAPPING = {
 DEFAULT_TYPE = ('string', None)
 
 
-def rule_to_params(rule, overrides=None, *, major_api_version = 2):
+def rule_to_params(rule, overrides=None, *, major_api_version=2):
     overrides = (overrides or {})
     result = [
         argument_to_param(
