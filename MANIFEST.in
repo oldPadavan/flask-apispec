@@ -1,2 +1,0 @@
-include *.rst LICENSE
-recursive-include flask_apispec *
